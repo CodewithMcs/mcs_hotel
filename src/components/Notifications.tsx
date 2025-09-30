@@ -131,192 +131,137 @@ const Notifications: React.FC = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header with Stats and Actions */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Bell className="text-blue-400" size={24} />
-            <h2 className="text-2xl font-semibold text-white">Notifications</h2>
-            {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                {unreadCount}
-              </span>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button
-            onClick={markAllAsRead}
-            variant="secondary"
-            size="sm"
-            disabled={unreadCount === 0}
-          >
-            Mark All Read
-          </Button>
-          <Button
-            onClick={clearAll}
-            variant="danger"
-            size="sm"
-            disabled={notifications.length === 0}
-          >
-            Clear All
-          </Button>
-        </div>
-      </div>
+<div className="p-4 sm:p-6 space-y-6">
+  {/* Header with Stats and Actions */}
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+    <div className="flex items-center space-x-2 flex-wrap">
+      <Bell className="text-blue-400" size={24} />
+      <h2 className="text-xl sm:text-2xl font-semibold text-white">Notifications</h2>
+      {unreadCount > 0 && (
+        <span className="bg-red-500 text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-full">
+          {unreadCount}
+        </span>
+      )}
+    </div>
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'all' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          All ({notifications.length})
-        </button>
-        <button
-          onClick={() => setFilter('unread')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'unread' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Unread ({unreadCount})
-        </button>
-        <button
-          onClick={() => setFilter('check-in')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'check-in' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Check-ins
-        </button>
-        <button
-          onClick={() => setFilter('maintenance')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'maintenance' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Maintenance
-        </button>
-        <button
-          onClick={() => setFilter('billing')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'billing' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Billing
-        </button>
-        <button
-          onClick={() => setFilter('staff')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filter === 'staff' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Staff
-        </button>
-      </div>
+    <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
+      <Button
+        onClick={markAllAsRead}
+        variant="secondary"
+        size="sm"
+        disabled={unreadCount === 0}
+      >
+        Mark All Read
+      </Button>
+      <Button
+        onClick={clearAll}
+        variant="danger"
+        size="sm"
+        disabled={notifications.length === 0}
+      >
+        Clear All
+      </Button>
+    </div>
+  </div>
 
-      {/* Notifications List */}
-      <div className="space-y-3">
-        {filteredNotifications.length === 0 ? (
-          <div className="text-center py-12">
-            <Bell className="mx-auto text-gray-600 mb-4" size={48} />
-            <p className="text-gray-400 text-lg">No notifications found</p>
-            <p className="text-gray-500 text-sm mt-2">
-              {filter === 'unread' ? "You're all caught up!" : "No notifications match your current filter."}
-            </p>
-          </div>
-        ) : (
-          filteredNotifications.map(notification => (
-            <div
-              key={notification.id}
-              className={`bg-gray-800 border border-gray-700 border-l-4 rounded-lg p-4 transition-all duration-200 hover:bg-gray-700/50 ${
-                getNotificationColor(notification.type)
-              } ${!notification.read ? 'shadow-lg' : 'opacity-75'}`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3 flex-1">
-                  <div className="flex-shrink-0 mt-1">
-                    {getNotificationIcon(notification.type)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
-                      {getCategoryIcon(notification.category)}
-                      <h4 className={`font-medium ${!notification.read ? 'text-white' : 'text-gray-300'}`}>
-                        {notification.title}
-                      </h4>
-                      {!notification.read && (
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      )}
-                    </div>
-                    <p className="text-gray-400 text-sm leading-relaxed">
-                      {notification.message}
-                    </p>
-                    <div className="flex items-center space-x-2 mt-2">
-                      <Clock className="text-gray-500" size={12} />
-                      <span className="text-gray-500 text-xs">{notification.time}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2 ml-4">
+  {/* Filter Tabs */}
+  <div className="flex flex-wrap gap-2">
+    {['all','unread','check-in','maintenance','billing','staff'].map(f => (
+      <button
+        key={f}
+        onClick={() => setFilter(f)}
+        className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${
+          filter === f ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+        }`}
+      >
+        {f.charAt(0).toUpperCase() + f.slice(1)} {f === 'all' ? `(${notifications.length})` : f === 'unread' ? `(${unreadCount})` : ''}
+      </button>
+    ))}
+  </div>
+
+  {/* Notifications List */}
+  <div className="space-y-3">
+    {filteredNotifications.length === 0 ? (
+      <div className="text-center py-12">
+        <Bell className="mx-auto text-gray-600 mb-4" size={48} />
+        <p className="text-gray-400 text-lg">No notifications found</p>
+        <p className="text-gray-500 text-sm mt-2">
+          {filter === 'unread' ? "You're all caught up!" : "No notifications match your current filter."}
+        </p>
+      </div>
+    ) : (
+      filteredNotifications.map(notification => (
+        <div
+          key={notification.id}
+          className={`bg-gray-800 border border-gray-700 border-l-4 rounded-lg p-4 transition-all duration-200 hover:bg-gray-700/50 ${
+            getNotificationColor(notification.type)
+          } ${!notification.read ? 'shadow-lg' : 'opacity-75'}`}
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+            <div className="flex items-start sm:items-center space-x-3 flex-1">
+              <div className="flex-shrink-0 mt-1">
+                {getNotificationIcon(notification.type)}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center flex-wrap space-x-2 mb-1">
+                  {getCategoryIcon(notification.category)}
+                  <h4 className={`font-medium ${!notification.read ? 'text-white' : 'text-gray-300'}`}>
+                    {notification.title}
+                  </h4>
                   {!notification.read && (
-                    <Button
-                      onClick={() => markAsRead(notification.id)}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      Mark Read
-                    </Button>
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                   )}
-                  <button
-                    onClick={() => deleteNotification(notification.id)}
-                    className="p-1 hover:bg-gray-600 rounded transition-colors"
-                  >
-                    <X className="text-gray-400 hover:text-white" size={16} />
-                  </button>
+                </div>
+                <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+                  {notification.message}
+                </p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <Clock className="text-gray-500" size={12} />
+                  <span className="text-gray-500 text-xs sm:text-sm">{notification.time}</span>
                 </div>
               </div>
             </div>
-          ))
-        )}
-      </div>
 
-      {/* Quick Actions */}
-      {filteredNotifications.some(n => n.category === 'maintenance') && (
-        <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-            <Bed className="mr-2 text-yellow-400" size={20} />
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="primary" size="sm">
-              Schedule Maintenance
-            </Button>
-            <Button variant="secondary" size="sm">
-              Contact Repair Service
-            </Button>
-            <Button variant="secondary" size="sm">
-              Update Room Status
-            </Button>
+            <div className="flex flex-wrap sm:flex-col items-start sm:items-end space-x-2 sm:space-x-0 sm:space-y-1 mt-2 sm:mt-0">
+              {!notification.read && (
+                <Button
+                  onClick={() => markAsRead(notification.id)}
+                  variant="secondary"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  Mark Read
+                </Button>
+              )}
+              <button
+                onClick={() => deleteNotification(notification.id)}
+                className="p-1 hover:bg-gray-600 rounded transition-colors"
+              >
+                <X className="text-gray-400 hover:text-white" size={16} />
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      ))
+    )}
+  </div>
+
+  {/* Quick Actions */}
+  {filteredNotifications.some(n => n.category === 'maintenance') && (
+    <div className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700">
+      <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center">
+        <Bed className="mr-2 text-yellow-400" size={20} />
+        Quick Actions
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+        <Button variant="primary" size="sm" className="w-full">Schedule Maintenance</Button>
+        <Button variant="secondary" size="sm" className="w-full">Contact Repair Service</Button>
+        <Button variant="secondary" size="sm" className="w-full">Update Room Status</Button>
+      </div>
     </div>
+  )}
+</div>
+
   );
 };
 

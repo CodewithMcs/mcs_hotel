@@ -174,124 +174,130 @@ const StaffManagement: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header with Actions */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              placeholder="Search staff..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-            />
+  <div className="p-4 sm:p-6 space-y-6">
+  {/* Header with Actions */}
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+    <div className="flex flex-col sm:flex-row sm:items-center flex-1 space-y-2 sm:space-y-0 sm:space-x-3">
+      <div className="relative w-full sm:w-auto">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+        <input
+          type="text"
+          placeholder="Search staff..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+        />
+      </div>
+      <select
+        value={filterRole}
+        onChange={(e) => setFilterRole(e.target.value)}
+        className="w-full sm:w-auto px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+      >
+        <option value="All">All Roles</option>
+        <option value="Admin">Admin</option>
+        <option value="Manager">Manager</option>
+        <option value="Receptionist">Receptionist</option>
+        <option value="Housekeeping">Housekeeping</option>
+        <option value="Maintenance">Maintenance</option>
+        <option value="Security">Security</option>
+      </select>
+    </div>
+    <Button
+      onClick={() => setShowModal(true)}
+      variant="primary"
+      icon={Plus}
+      className="w-full sm:w-auto mt-2 sm:mt-0"
+    >
+      Add Staff
+    </Button>
+  </div>
+
+  {/* Staff Grid */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    {filteredStaff.map(staffMember => (
+      <div key={staffMember.id} className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 flex flex-col">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <User className="text-white" size={20} />
+            </div>
+            <div className="flex flex-col">
+              <h3 className="text-md sm:text-lg font-semibold text-white truncate">{staffMember.name}</h3>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getRoleColor(staffMember.role)}`}>
+                {staffMember.role}
+              </span>
+            </div>
           </div>
           <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            value={staffMember.status}
+            onChange={(e) => updateStaffStatus(staffMember.id, e.target.value as Staff['status'])}
+            className={`px-2 py-1 bg-transparent text-xs font-medium focus:outline-none ${getStatusColor(staffMember.status)}`}
           >
-            <option value="All">All Roles</option>
-            <option value="Admin">Admin</option>
-            <option value="Manager">Manager</option>
-            <option value="Receptionist">Receptionist</option>
-            <option value="Housekeeping">Housekeeping</option>
-            <option value="Maintenance">Maintenance</option>
-            <option value="Security">Security</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="On Leave">On Leave</option>
           </select>
         </div>
-        <Button
-          onClick={() => setShowModal(true)}
-          variant="primary"
-          icon={Plus}
-        >
-          Add Staff
-        </Button>
-      </div>
 
-      {/* Staff Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredStaff.map(staffMember => (
-          <div key={staffMember.id} className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <User className="text-white" size={20} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white">{staffMember.name}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getRoleColor(staffMember.role)}`}>
-                    {staffMember.role}
-                  </span>
-                </div>
-              </div>
-              <select
-                value={staffMember.status}
-                onChange={(e) => updateStaffStatus(staffMember.id, e.target.value as Staff['status'])}
-                className={`px-2 py-1 bg-transparent text-xs font-medium focus:outline-none ${getStatusColor(staffMember.status)}`}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="On Leave">On Leave</option>
-              </select>
-            </div>
+        {/* Contact & Info */}
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2 text-sm sm:text-sm">
+            <Mail className="text-blue-400" size={16} />
+            <span className="text-gray-300 truncate">{staffMember.email}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm sm:text-sm">
+            <Phone className="text-green-400" size={16} />
+            <span className="text-gray-300 truncate">{staffMember.phone}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm sm:text-sm">
+            <UserCog className="text-purple-400" size={16} />
+            <span className="text-gray-300 truncate">{staffMember.department}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm sm:text-sm">
+            <Clock className="text-amber-400" size={16} />
+            <span className="text-gray-300">{staffMember.shift} Shift</span>
+          </div>
+          <div className="flex items-center space-x-2 text-sm sm:text-sm">
+            <Calendar className="text-cyan-400" size={16} />
+            <span className="text-gray-300">Since {staffMember.startDate}</span>
+          </div>
+        </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Mail className="text-blue-400" size={16} />
-                <span className="text-gray-300 text-sm">{staffMember.email}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="text-green-400" size={16} />
-                <span className="text-gray-300 text-sm">{staffMember.phone}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <UserCog className="text-purple-400" size={16} />
-                <span className="text-gray-300 text-sm">{staffMember.department}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Clock className="text-amber-400" size={16} />
-                <span className="text-gray-300 text-sm">{staffMember.shift} Shift</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Calendar className="text-cyan-400" size={16} />
-                <span className="text-gray-300 text-sm">Since {staffMember.startDate}</span>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-400">Performance:</span>
-                <div className="flex items-center space-x-1">
-                  {getPerformanceStars(staffMember.performance)}
-                  <span className="text-sm text-gray-300 ml-2">{staffMember.performance}</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-sm text-gray-400">Attendance:</span>
-                <span className="text-sm text-green-400">{staffMember.attendanceRate}%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">Salary:</span>
-                <span className="text-sm font-semibold text-green-400">${staffMember.salary.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <Button
-                onClick={() => handleEdit(staffMember)}
-                variant="secondary"
-                size="sm"
-                className="w-full"
-              >
-                Edit Profile
-              </Button>
+        {/* Performance & Salary */}
+        <div className="mt-3 sm:mt-4 pt-3 border-t border-gray-700 space-y-2">
+          <div className="flex justify-between items-center text-sm sm:text-sm">
+            <span className="text-gray-400">Performance:</span>
+            <div className="flex items-center space-x-1">
+              {getPerformanceStars(staffMember.performance)}
+              <span className="text-gray-300 ml-1">{staffMember.performance}</span>
             </div>
           </div>
-        ))}
+          <div className="flex justify-between items-center text-sm sm:text-sm">
+            <span className="text-gray-400">Attendance:</span>
+            <span className="text-green-400">{staffMember.attendanceRate}%</span>
+          </div>
+          <div className="flex justify-between items-center text-sm sm:text-sm">
+            <span className="text-gray-400">Salary:</span>
+            <span className="text-green-400 font-semibold">${staffMember.salary.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <div className="mt-3 sm:mt-4">
+          <Button
+            onClick={() => handleEdit(staffMember)}
+            variant="secondary"
+            size="sm"
+            className="w-full"
+          >
+            Edit Profile
+          </Button>
+        </div>
       </div>
+    ))}
+  </div>
+
+
+
 
       {/* Add/Edit Staff Modal */}
       <Modal

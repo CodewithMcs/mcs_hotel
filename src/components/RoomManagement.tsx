@@ -139,224 +139,205 @@ const RoomManagement: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header with Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              placeholder="Search rooms..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-          >
-            <option value="All">All Status</option>
-            <option value="Available">Available</option>
-            <option value="Booked">Booked</option>
-            <option value="Checked-in">Checked-in</option>
-            <option value="Under Maintenance">Under Maintenance</option>
-          </select>
-        </div>
-        <Button
-          onClick={() => setShowModal(true)}
-          variant="primary"
-          icon={Plus}
-        >
-          Add Room
-        </Button>
+<div className="p-4 sm:p-6 space-y-6">
+  {/* Header with Actions */}
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+    <div className="flex flex-col sm:flex-row sm:items-center w-full sm:w-auto space-y-2 sm:space-y-0 sm:space-x-4">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+        <input
+          type="text"
+          placeholder="Search rooms..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+        />
       </div>
-
-      {/* Rooms Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRooms.map(room => (
-          <div key={room.id} className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 hover:transform hover:scale-105">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <Bed className="text-blue-400" size={20} />
-                <h3 className="text-lg font-semibold text-white">Room {room.number}</h3>
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(room.status)}`}>
-                {room.status}
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Type:</span>
-                <span className="text-white font-medium">{room.type}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Price:</span>
-                <span className="text-green-400 font-bold">${room.price}/night</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Floor:</span>
-                <span className="text-white">{room.floor}</span>
-              </div>
-              <div>
-                <span className="text-gray-400">Amenities:</span>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {room.amenities.map(amenity => (
-                    <span key={amenity} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
-                      {amenity}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm">{room.description}</p>
-            </div>
-
-            <div className="flex space-x-2 mt-6">
-              <Button
-                onClick={() => handleEdit(room)}
-                variant="secondary"
-                icon={Edit}
-                size="sm"
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => handleDelete(room.id)}
-                variant="danger"
-                icon={Trash2}
-                size="sm"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Add/Edit Room Modal */}
-      <Modal
-        isOpen={showModal}
-        onClose={() => {
-          setShowModal(false);
-          setEditingRoom(null);
-          setFormData({
-            number: '',
-            type: 'Single',
-            price: '',
-            floor: '',
-            description: '',
-            amenities: []
-          });
-        }}
-        title={editingRoom ? 'Edit Room' : 'Add New Room'}
+      <select
+        value={filterStatus}
+        onChange={(e) => setFilterStatus(e.target.value)}
+        className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 w-full sm:w-auto"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Room Number
-              </label>
-              <input
-                type="text"
-                value={formData.number}
-                onChange={(e) => setFormData({...formData, number: e.target.value})}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Room Type
-              </label>
-              <select
-                value={formData.type}
-                onChange={(e) => setFormData({...formData, type: e.target.value as Room['type']})}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              >
-                <option value="Single">Single</option>
-                <option value="Double">Double</option>
-                <option value="Suite">Suite</option>
-                <option value="Deluxe">Deluxe</option>
-              </select>
-            </div>
-          </div>
+        <option value="All">All Status</option>
+        <option value="Available">Available</option>
+        <option value="Booked">Booked</option>
+        <option value="Checked-in">Checked-in</option>
+        <option value="Under Maintenance">Under Maintenance</option>
+      </select>
+    </div>
+    <Button
+      onClick={() => setShowModal(true)}
+      variant="primary"
+      icon={Plus}
+      className="w-full sm:w-auto"
+    >
+      Add Room
+    </Button>
+  </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Price per Night ($)
-              </label>
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Floor
-              </label>
-              <input
-                type="number"
-                value={formData.floor}
-                onChange={(e) => setFormData({...formData, floor: e.target.value})}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
+  {/* Rooms Grid */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    {filteredRooms.map(room => (
+      <div key={room.id} className="bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-700 hover:border-gray-600 transition-all duration-200 hover:scale-105">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center space-x-2 mb-2 sm:mb-0">
+            <Bed className="text-blue-400" size={20} />
+            <h3 className="text-lg sm:text-base font-semibold text-white">Room {room.number}</h3>
           </div>
+          <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium border ${getStatusColor(room.status)}`}>
+            {room.status}
+          </span>
+        </div>
 
+        <div className="space-y-2 text-sm sm:text-base">
+          <div className="flex justify-between">
+            <span className="text-gray-400">Type:</span>
+            <span className="text-white font-medium">{room.type}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Price:</span>
+            <span className="text-green-400 font-bold">${room.price}/night</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Floor:</span>
+            <span className="text-white">{room.floor}</span>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Amenities
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {amenityOptions.map(amenity => (
-                <label key={amenity} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.amenities.includes(amenity)}
-                    onChange={() => toggleAmenity(amenity)}
-                    className="form-checkbox h-4 w-4 text-blue-600"
-                  />
-                  <span className="text-sm text-gray-300">{amenity}</span>
-                </label>
+            <span className="text-gray-400">Amenities:</span>
+            <div className="flex flex-wrap gap-1 sm:gap-2 mt-1 sm:mt-2">
+              {room.amenities.map(amenity => (
+                <span key={amenity} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs sm:text-sm rounded">
+                  {amenity}
+                </span>
               ))}
             </div>
           </div>
+          <p className="text-gray-300 text-sm sm:text-base">{room.description}</p>
+        </div>
 
-          <div className="flex space-x-3 pt-4">
-            <Button type="submit" variant="primary" className="flex-1">
-              {editingRoom ? 'Update Room' : 'Add Room'}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setShowModal(false)}
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </Modal>
-    </div>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
+          <Button
+            onClick={() => handleEdit(room)}
+            variant="secondary"
+            icon={Edit}
+            size="sm"
+            className="w-full sm:w-auto"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => handleDelete(room.id)}
+            variant="danger"
+            icon={Trash2}
+            size="sm"
+            className="w-full sm:w-auto"
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Add/Edit Room Modal */}
+  <Modal
+    isOpen={showModal}
+    onClose={() => {
+      setShowModal(false);
+      setEditingRoom(null);
+      setFormData({ number: '', type: 'Single', price: '', floor: '', description: '', amenities: [] });
+    }}
+    title={editingRoom ? 'Edit Room' : 'Add New Room'}
+  >
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Room Number</label>
+          <input
+            type="text"
+            value={formData.number}
+            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Room Type</label>
+          <select
+            value={formData.type}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value as Room['type'] })}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+          >
+            <option value="Single">Single</option>
+            <option value="Double">Double</option>
+            <option value="Suite">Suite</option>
+            <option value="Deluxe">Deluxe</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Price per Night ($)</label>
+          <input
+            type="number"
+            value={formData.price}
+            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Floor</label>
+          <input
+            type="number"
+            value={formData.floor}
+            onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
+        <textarea
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+          rows={3}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Amenities</label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {amenityOptions.map(amenity => (
+            <label key={amenity} className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.amenities.includes(amenity)}
+                onChange={() => toggleAmenity(amenity)}
+                className="form-checkbox h-4 w-4 text-blue-600"
+              />
+              <span className="text-sm text-gray-300">{amenity}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+        <Button type="submit" variant="primary" className="w-full sm:flex-1">
+          {editingRoom ? 'Update Room' : 'Add Room'}
+        </Button>
+        <Button type="button" variant="secondary" onClick={() => setShowModal(false)} className="w-full sm:w-auto">
+          Cancel
+        </Button>
+      </div>
+    </form>
+  </Modal>
+</div>
+
   );
 };
 
